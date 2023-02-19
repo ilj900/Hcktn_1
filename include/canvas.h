@@ -17,6 +17,7 @@ public:
 	int Save(const std::string& Path);
 	int DrawCircle(float Radius, float X, float Y, float R, float G, float B);
 	int DrawQuad(float A, float X, float Y, float R, float G, float B);
+	int Mandelbrot(float AreaWidth, float AreaHeight, float StartingPointX, float StartingPointY);
 
 private:
 	int Width;

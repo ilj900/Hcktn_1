@@ -135,3 +135,57 @@ int FCanvas::DrawQuad(float A, float X, float Y, float R, float G, float B)
 	return 0;
 
 }
+
+int CalculateMandelbrotPoint(float x, float y)
+{
+	float XPrev = x;
+	float YPrev = y;
+
+	const int MaxIterations = 64;
+	for (int i = 0; i < MaxIterations; ++i)
+	{
+		float X2 = XPrev * XPrev;
+		float Y2 = YPrev * YPrev;
+		if (X2 + Y2 > 4)
+		{
+			return i;
+		}
+		float XTmp = X2 - Y2 + x;
+		float YTmp = 2.f * XPrev * YPrev + y;
+		XPrev = XTmp;
+		YPrev = YTmp;
+	}
+
+	return MaxIterations;
+}
+
+
+int FCanvas::Mandelbrot(float AreaWidth, float AreaHeight, float StartingPointX, float StartingPointY)
+{
+	float XStep = AreaWidth / float(Width);
+	float YStep = AreaHeight / float(Height);
+	for (int i = 0; i < Width; ++i)
+	{
+		for (int j = 0; j < Height; ++j)
+		{
+			float x = StartingPointX + ((float(i) + 0.5f) * XStep);
+			float y = StartingPointY + ((float(j) + 0.5f) * YStep);
+			int Count = CalculateMandelbrotPoint(x, y);
+			if (Count >= 64)
+			{
+				Data[j * Width + i].Red = 0;
+				Data[j * Width + i].Green = 255;
+				Data[j * Width + i].Blue = 128;
+			}
+			else
+			{
+				Data[j * Width + i].Red = 225;
+				Data[j * Width + i].Green = 128;
+				Data[j * Width + i].Blue = 0;
+			}
+		}
+	}
+
+	return 0;
+
+}

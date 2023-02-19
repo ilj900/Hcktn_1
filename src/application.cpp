@@ -12,9 +12,7 @@ int FApplication::Run()
 {
 	auto Start = std::chrono::system_clock::now();
 
-	Canvas->DrawQuad(400, 500, 500, 0.3f, 0.3f, 0.9f);
-
-	Canvas->DrawCircle(400, 1200, 1200, 0.3f, 0.3f, 0.9f);
+	Canvas->Mandelbrot(3.f, 2.f, -2.f, -1.f);
 
 	auto End = std::chrono::system_clock::now();
 	auto Elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(End - Start);
