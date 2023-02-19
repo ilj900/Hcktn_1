@@ -26,42 +26,44 @@ Canvas::Write(std::span<std::byte> data) const
 }
 
 void
-Canvas::DrawShape(
-    std::function<bool(double, double)> fn,
-    const Pixel& color)
+Canvas::DrawShape(DrawFn fn)
+{
+    mDrawCommands.push_back(fn);
+}
+
+void
+Canvas::DrawBackground(DrawFn fn)
+{
+    mDrawCommands.push_back(fn);
+}
+
+inline void 
+Canvas::SetPixel(std::uint32_t x, std::uint32_t y, Pixel p)
+{
+    p.Write(mData.data() + (y * mWidth + x) * Canvas::BytesPerPixel);
+}
+
+void
+Canvas::ProcessCommands()
 {
     for (std::size_t i = 0; i < mHeight; i++)
     {
         for (std::size_t j = 0; j < mWidth; j++)
         {
-            if (fn(j, i))
+            for (auto it = mDrawCommands.rbegin(); it != mDrawCommands.rend(); it++)
             {
-                SetPixel(j, i, color);
+                auto pixel = it->operator()(j, i);
+                
+                if (pixel.has_value())
+                {
+                    SetPixel(j, i, pixel.value());
+                    break;
+                }
             }
         }
     }
 
     Logger::Info("Drawn shape");
-}
-
-void
-Canvas::DrawBackground(std::function<Pixel(double, double)> fn)
-{
-    for (std::size_t i = 0; i < mHeight; i++)
-    {
-        for (std::size_t j = 0; j < mWidth; j++)
-        {
-            SetPixel(j, i, fn(j, i));
-        }
-    }
-
-    Logger::Info("Drawn background");
-}
-
-void 
-Canvas::SetPixel(std::uint32_t x, std::uint32_t y, Pixel p)
-{
-    p.Write(mData.data() + (y * mWidth + x) * Canvas::BytesPerPixel);
 }
 
 }
