@@ -67,15 +67,15 @@ bool Writer::save( std::string filename )
     file.write( (char*) ( &dib_info ), sizeof( dib_info ) );
 
     bmpfile_color_table off_color{};
-    off_color.red = 0;
+    off_color.red = 0xFF;
     off_color.green = 0;
     off_color.blue = 0;
     file.write( (char*) ( &off_color ), sizeof( off_color ) );
 
     bmpfile_color_table on_color{};
-    on_color.red = 0xFF;
+    on_color.red = 0;
     on_color.green = 0xFF;
-    on_color.blue = 0xFF;
+    on_color.blue = 0;
     file.write( (char*) ( &on_color ), sizeof( on_color ) );
 
     for ( size_t num = 0; num < matrixBytes; ++num )
