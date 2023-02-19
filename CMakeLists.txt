@@ -4,6 +4,8 @@ project(Hackaton
     DESCRIPTION "Super cool application")
 
 set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_FLAGS_RELEASE "-O3")
+set(CMAKE_CXX_FLAGS "-Wall -Wextra")
 
 if (NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Debug)

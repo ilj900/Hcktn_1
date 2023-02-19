@@ -1,6 +1,7 @@
 #include <array>
 #include <fstream>
 #include <cmath>
+#include <cstdlib>
 
 #include "Logger.h"
 #include "Image.h"
@@ -8,9 +9,10 @@
 
 auto main() -> int try
 {
-    auto start = std::chrono::high_resolution_clock::now();
-
+    Hackaton::BitmapImage image {3840, 2160};
     Hackaton::Canvas canvas {3840, 2160};
+
+    auto start = std::chrono::high_resolution_clock::now();
 
     // Draw circle
     canvas.DrawBackground([](double x, double y) -> std::optional<Hackaton::Pixel>
@@ -20,38 +22,58 @@ auto main() -> int try
         double b = (y * 2 / 2160);
 
         return std::optional { Hackaton::Pixel {
-            (std::uint8_t)(Hackaton::Lerp(0.3, 0.7, std::clamp(r, 0.0, 1.0)) * 255),
-            (std::uint8_t)(Hackaton::Lerp(0.3, 0.7, std::clamp(g, 0.0, 1.0)) * 255),
-            (std::uint8_t)(Hackaton::Lerp(0.3, 0.7, std::clamp(b, 0.0, 1.0)) * 255)
+            (std::uint8_t)(Hackaton::Lerp(0.2, 0.8, std::clamp(r, 0.0, 1.0)) * 255),
+            (std::uint8_t)(Hackaton::Lerp(0.2, 0.8, std::clamp(g, 0.0, 1.0)) * 255),
+            (std::uint8_t)(Hackaton::Lerp(0.2, 0.8, std::clamp(b, 0.0, 1.0)) * 255)
         }};
     });
 
+    srand(time(0));
+
     // Draw circle
-    canvas.DrawShape([x0 = 700, y0 = 700, radius = 300](double x, double y) -> std::optional<Hackaton::Pixel>
+    for (int i = 0; i < 20; i++)
     {
-        return (std::pow(x - x0, 2) + std::pow(y - y0, 2) <= std::pow(radius, 2))
-            ? std::optional{ Hackaton::Pixel::Black() } : std::nullopt;
-    });
+        int x0 = rand() % 3840;
+        int y0 = rand() % 2160;
+        int radius = rand() % 100 + 100;
+        canvas.DrawShape([radius, x0, y0](double x, double y) -> std::optional<Hackaton::Pixel>
+        {
+            double distance = 1.0 - std::sqrt(std::pow(x - x0, 2) + std::pow(y - y0, 2)) / radius / 2;
+            auto d = (std::uint8_t)(Hackaton::Lerp(0.0, 0.2, std::clamp(distance, 0.0, 1.0)) * 255);
+
+            return (std::pow(x - x0, 2) + std::pow(y - y0, 2) <= std::pow(radius, 2))
+                ? std::optional{ Hackaton::Pixel {d, d, d} } : std::nullopt;
+        });
+    }
 
     // Draw square
-    canvas.DrawShape([x0 = 3840 - 700, y0 = 2160 - 700, size = 600](double x, double y) -> std::optional<Hackaton::Pixel>
+    for (int i = 0; i < 20; i++)
     {
-        return (x <= (x0 + size / 2)
-            && x >= (x0 - size / 2)
-            && y <= (y0 + size / 2)
-            && y >= (y0 - size / 2))
-            ? std::optional{ Hackaton::Pixel::Black() } : std::nullopt;
-    });
+        int x0 = rand() % 3840;
+        int y0 = rand() % 2160;
+        int size = rand() % 100 + 100;
+        canvas.DrawShape([x0, y0, size](double x, double y) -> std::optional<Hackaton::Pixel>
+        {
+            double distance = 1.0 - std::sqrt(std::pow(x - x0, 2) + std::pow(y - y0, 2)) / size / 1.5;
+            auto d = (std::uint8_t)(Hackaton::Lerp(0.0, 0.2, std::clamp(distance, 0.0, 1.0)) * 255);
+
+            return (x <= (x0 + size / 2)
+                && x >= (x0 - size / 2)
+                && y <= (y0 + size / 2)
+                && y >= (y0 - size / 2))
+                ? std::optional{ Hackaton::Pixel {d, d, d} } : std::nullopt;
+        });
+    }
 
     canvas.ProcessCommands();
 
     auto end = std::chrono::high_resolution_clock::now();
+
     Hackaton::Logger::Warning(
         "Generation time " + std::to_string(
             std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count())
         + "ms");
 
-    Hackaton::BitmapImage image {3840, 2160};
     canvas.Write(image.Data());
     image.Save("Image.bmp");
 }

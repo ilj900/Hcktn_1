@@ -2,6 +2,7 @@
 #include "Logger.h"
 
 #include <cmath>
+#include <thread>
 
 namespace Hackaton
 {
@@ -46,24 +47,44 @@ Canvas::SetPixel(std::uint32_t x, std::uint32_t y, Pixel p)
 void
 Canvas::ProcessCommands()
 {
-    for (std::size_t i = 0; i < mHeight; i++)
+    std::vector<std::thread> threads;
+    std::uint32_t threadCount = std::thread::hardware_concurrency() * 2;
+
+    Logger::Info("Thread count " + std::to_string(threadCount));
+
+    for (std::uint32_t i = 0; i < threadCount; i++)
     {
-        for (std::size_t j = 0; j < mWidth; j++)
-        {
-            for (auto it = mDrawCommands.rbegin(); it != mDrawCommands.rend(); it++)
+        threads.emplace_back([id = i, this, threadCount]() {
+            std::uint32_t blockSize = mHeight / threadCount;
+            std::uint32_t upperBound = blockSize * (id + 1);
+
+            if (id == threadCount - 1) [[unlikely]]
             {
-                auto pixel = it->operator()(j, i);
-                
-                if (pixel.has_value())
+                upperBound = mHeight;
+            }
+
+            for (std::uint32_t i = blockSize * id; i < upperBound; i++)
+            {
+                for (std::uint32_t j = 0; j < mWidth; j++)
                 {
-                    SetPixel(j, i, pixel.value());
-                    break;
+                    for (auto it = mDrawCommands.rbegin(); it != mDrawCommands.rend(); it++)
+                    {
+                        auto pixel = it->operator()(j, i);
+
+                        if (pixel.has_value()) [[unlikely]]
+                        {
+                            SetPixel(j, i, pixel.value());
+                            break;
+                        }
+                    }
                 }
             }
-        }
+        });
     }
 
-    Logger::Info("Drawn shape");
+    for (auto& thread: threads) thread.join();
+
+    Logger::Info("Processed draw commands");
 }
 
 }
