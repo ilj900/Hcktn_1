@@ -31,39 +31,25 @@ auto main() -> int try
     srand(time(0));
 
     // Draw circle
-    for (int i = 0; i < 20; i++)
+    canvas.DrawShape([radius = 300, x0 = 2400, y0 = 1200](double x, double y) -> std::optional<Hackaton::Pixel>
     {
-        int x0 = rand() % 3840;
-        int y0 = rand() % 2160;
-        int radius = rand() % 100 + 100;
-        canvas.DrawShape([radius, x0, y0](double x, double y) -> std::optional<Hackaton::Pixel>
-        {
-            double distance = 1.0 - std::sqrt(std::pow(x - x0, 2) + std::pow(y - y0, 2)) / radius / 2;
-            auto d = (std::uint8_t)(Hackaton::Lerp(0.0, 0.2, std::clamp(distance, 0.0, 1.0)) * 255);
-
-            return (std::pow(x - x0, 2) + std::pow(y - y0, 2) <= std::pow(radius, 2))
-                ? std::optional{ Hackaton::Pixel {d, d, d} } : std::nullopt;
-        });
-    }
+        double distance = 1.0 - std::sqrt(std::pow(x - x0, 2) + std::pow(y - y0, 2)) / radius / 2;
+        auto d = (std::uint8_t)(Hackaton::Lerp(0.0, 0.2, std::clamp(distance, 0.0, 1.0)) * 255);
+        return (std::pow(x - x0, 2) + std::pow(y - y0, 2) <= std::pow(radius, 2))
+            ? std::optional{ Hackaton::Pixel {d, d, d} } : std::nullopt;
+    });
 
     // Draw square
-    for (int i = 0; i < 20; i++)
+    canvas.DrawShape([x0 = 1200, y0 = 1200, size = 600](double x, double y) -> std::optional<Hackaton::Pixel>
     {
-        int x0 = rand() % 3840;
-        int y0 = rand() % 2160;
-        int size = rand() % 100 + 100;
-        canvas.DrawShape([x0, y0, size](double x, double y) -> std::optional<Hackaton::Pixel>
-        {
-            double distance = 1.0 - std::sqrt(std::pow(x - x0, 2) + std::pow(y - y0, 2)) / size / 1.5;
-            auto d = (std::uint8_t)(Hackaton::Lerp(0.0, 0.2, std::clamp(distance, 0.0, 1.0)) * 255);
-
-            return (x <= (x0 + size / 2)
-                && x >= (x0 - size / 2)
-                && y <= (y0 + size / 2)
-                && y >= (y0 - size / 2))
-                ? std::optional{ Hackaton::Pixel {d, d, d} } : std::nullopt;
-        });
-    }
+        double distance = 1.0 - std::sqrt(std::pow(x - x0, 2) + std::pow(y - y0, 2)) / size / 1.5;
+        auto d = (std::uint8_t)(Hackaton::Lerp(0.0, 0.2, std::clamp(distance, 0.0, 1.0)) * 255);
+        return (x <= (x0 + size / 2)
+            && x >= (x0 - size / 2)
+            && y <= (y0 + size / 2)
+            && y >= (y0 - size / 2))
+            ? std::optional{ Hackaton::Pixel {d, d, d} } : std::nullopt;
+    });
 
     canvas.ProcessCommands();
 
