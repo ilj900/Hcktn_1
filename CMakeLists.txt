@@ -10,9 +10,13 @@ include_directories(
 
 
 set(SOURCE
-        src/main.cpp)
+        src/main.cpp
+		src/canvas.cpp
+		src/application.cpp)
 
 set(INCLUDE
-		include/main.h)
+		include/main.h
+		include/canvas.h
+		include/application.h)
 
 add_executable(Hcktn_1 ${SOURCE} ${INCLUDE})

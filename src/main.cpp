@@ -1,14 +1,9 @@
 #include "main.h"
 
-#include <iostream>
+#include "application.h"
 
 int main()
 {
-	PrintHelloWorld();
-	return 0;
-}
-
-void PrintHelloWorld()
-{
-	std::cout << "Hello, World!" << std::endl;
+	FApplication Application;
+	return Application.Run();
 }
