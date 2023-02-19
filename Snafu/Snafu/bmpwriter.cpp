@@ -27,6 +27,17 @@ size_t PixelMatrix::height() const
     return height_;
 }
 
+char PixelMatrix::getByte( size_t num ) const
+{
+    char result{};
+    size_t base = num * 8;
+    for ( int i = 0; i < 8; i++ )
+    {
+        result += pixels_[base + i] << i;
+    }
+    return result;
+}
+
 Writer::Writer( const PixelMatrix& mat ) :
     matrix_{ mat }
 {}
@@ -34,10 +45,11 @@ Writer::Writer( const PixelMatrix& mat ) :
 bool Writer::save( std::string filename )
 {
     std::ofstream file( filename );
+    const size_t matrixBytes = matrix_.width() * matrix_.height() / 8;
 
     bmpfile_header header {};
-    header.bmp_offset = sizeof( bmpfile_header ) + sizeof( bmpfile_dib_info ) + sizeof( bmpfile_color_table );
-    header.file_size = header.bmp_offset + matrix_.width() * matrix_.height() / 8;
+    header.bmp_offset = sizeof( bmpfile_header ) + sizeof( bmpfile_dib_info ) + 2 * sizeof( bmpfile_color_table );
+    header.file_size = header.bmp_offset + matrixBytes;
     file.write( (char*) ( &header ), sizeof( header ) );
 
     bmpfile_dib_info dib_info {};
@@ -50,9 +62,26 @@ bool Writer::save( std::string filename )
     dib_info.bmp_byte_size = 0;
     dib_info.hres = 200;
     dib_info.vres = 200;
-    dib_info.num_colors = 1;
+    dib_info.num_colors = 2;
     dib_info.num_important_colors = 0;
     file.write( (char*) ( &dib_info ), sizeof( dib_info ) );
 
+    bmpfile_color_table off_color{};
+    off_color.red = 0;
+    off_color.green = 0;
+    off_color.blue = 0;
+    file.write( (char*) ( &off_color ), sizeof( off_color ) );
+
+    bmpfile_color_table on_color{};
+    on_color.red = 0xFF;
+    on_color.green = 0xFF;
+    on_color.blue = 0xFF;
+    file.write( (char*) ( &on_color ), sizeof( on_color ) );
+
+    for ( size_t num = 0; num < matrixBytes; ++num )
+    {
+        char c = matrix_.getByte( num );
+        file.write( &c, 1 );
+    }
     return true;
 }

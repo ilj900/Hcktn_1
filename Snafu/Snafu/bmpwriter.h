@@ -11,6 +11,7 @@ public:
     bool get( size_t x, size_t y ) const;
     size_t width() const;
     size_t height() const;
+    char getByte( size_t num ) const;
 private:
     std::vector<bool> pixels_;
     size_t width_;
