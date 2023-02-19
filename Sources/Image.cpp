@@ -23,7 +23,7 @@ BitmapImage::BitmapImage(std::uint32_t width, std::uint32_t height)
 }
 
 std::array<std::byte, BitmapImage::FileHeaderSize> 
-BitmapImage::GenerateBitmapFileHeader (std::size_t fileSize)
+BitmapImage::GenerateBitmapFileHeader(std::size_t fileSize) const
 {
     std::array<std::byte, BitmapImage::FileHeaderSize> header;
     header.fill({});
@@ -40,7 +40,7 @@ BitmapImage::GenerateBitmapFileHeader (std::size_t fileSize)
 }
 
 std::array<std::byte, BitmapImage::InfoHeaderSize> 
-BitmapImage::GenerateBitmapInfoHeader()
+BitmapImage::GenerateBitmapInfoHeader() const
 {
     std::array<std::byte, BitmapImage::InfoHeaderSize> header;
     header.fill({});
@@ -61,7 +61,7 @@ BitmapImage::GenerateBitmapInfoHeader()
 }
 
 void
-BitmapImage::Save(const std::filesystem::path& location)
+BitmapImage::Save(const std::filesystem::path& location) const
 {
     std::ofstream file{location, std::ios::binary};
 
@@ -83,6 +83,12 @@ BitmapImage::Save(const std::filesystem::path& location)
         file.write((char*)mData.data() + (i*widthInBytes), BitmapImage::BytesPerPixel * mWidth);
         file.write((char*)padding, paddingSize);
     }
+}
+
+std::byte*
+BitmapImage::Data()
+{
+    return mData.data();
 }
 
 }

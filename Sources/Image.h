@@ -12,7 +12,9 @@ class BitmapImage
 {
 public:
     BitmapImage(std::uint32_t width, std::uint32_t height);
-    void Save(const std::filesystem::path& location);
+
+    void Save(const std::filesystem::path& location) const;
+    [[nodiscard]] std::byte* Data();
 
 private:
     std::uint32_t mWidth;
@@ -23,8 +25,11 @@ private:
     static constexpr inline uint8_t FileHeaderSize = 14;
     static constexpr inline uint8_t InfoHeaderSize = 40;
 
-    std::array<std::byte, BitmapImage::InfoHeaderSize> GenerateBitmapInfoHeader();
-    std::array<std::byte, BitmapImage::FileHeaderSize> GenerateBitmapFileHeader(std::size_t fileSize);
+    [[nodiscard]] std::array<std::byte, BitmapImage::InfoHeaderSize> 
+        GenerateBitmapInfoHeader() const;
+
+    [[nodiscard]] std::array<std::byte, BitmapImage::FileHeaderSize> 
+        GenerateBitmapFileHeader(std::size_t fileSize) const;
 };
 
 }
