@@ -6,28 +6,21 @@
 #include "Image.h"
 #include "Canvas.h"
 
-float lerp(float a, float b, float t)
+auto main() -> int try
 {
-    return a + t * (b - a);
-}
-
-auto main() -> int
-{
-    using namespace Hackaton;
-
-    Canvas canvas {3840, 2160};
+    Hackaton::Canvas canvas {3840, 2160};
 
     // Draw circle
-    canvas.DrawBackground([](double x, double y) -> Pixel
+    canvas.DrawBackground([](double x, double y) -> Hackaton::Pixel
     {
         double r = (x * 2 / 3840);
         double g = ((x + y) * 0.5 / (3840 + 2160));
         double b = (y * 2 / 2160);
 
         return {
-            (std::uint8_t)(lerp(0.3, 0.7, std::clamp(r, 0.0, 1.0)) * 255),
-            (std::uint8_t)(lerp(0.3, 0.7, std::clamp(g, 0.0, 1.0)) * 255),
-            (std::uint8_t)(lerp(0.3, 0.7, std::clamp(b, 0.0, 1.0)) * 255)
+            (std::uint8_t)(Hackaton::Lerp(0.3, 0.7, std::clamp(r, 0.0, 1.0)) * 255),
+            (std::uint8_t)(Hackaton::Lerp(0.3, 0.7, std::clamp(g, 0.0, 1.0)) * 255),
+            (std::uint8_t)(Hackaton::Lerp(0.3, 0.7, std::clamp(b, 0.0, 1.0)) * 255)
         };
     });
 
@@ -46,7 +39,11 @@ auto main() -> int
             && y >= (y0 - size / 2);
     });
 
-    BitmapImage image {3840, 2160};
+    Hackaton::BitmapImage image {3840, 2160};
     canvas.Write(image.Data());
-    image.Save("Image1.bmp");
+    image.Save("Image.bmp");
+}
+catch (const std::exception& ex)
+{
+    Hackaton::Logger::Error(ex.what());
 }
