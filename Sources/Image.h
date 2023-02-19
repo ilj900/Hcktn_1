@@ -4,6 +4,7 @@
 #include <filesystem>
 #include <vector>
 #include <array>
+#include <span>
 
 namespace Hackaton
 {
@@ -14,7 +15,7 @@ public:
     BitmapImage(std::uint32_t width, std::uint32_t height);
 
     void Save(const std::filesystem::path& location) const;
-    [[nodiscard]] std::byte* Data();
+    [[nodiscard]] std::span<std::byte> Data();
 
 private:
     std::uint32_t mWidth;

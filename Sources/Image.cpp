@@ -10,16 +10,8 @@ namespace Hackaton
 BitmapImage::BitmapImage(std::uint32_t width, std::uint32_t height)
     : mWidth(width)
     , mHeight(height)
+    , mData(BitmapImage::BytesPerPixel * width * height)
 {
-    mData.resize(BitmapImage::BytesPerPixel * width * height);
-
-    for (std::size_t i = 0; i < mHeight; i++) {
-        for (std::size_t j = 0; j < mWidth; j++) {
-            mData[i*mWidth*BytesPerPixel+j*BytesPerPixel+2] = (std::byte) ( i * 255 / mHeight );             ///red
-            mData[i*mWidth*BytesPerPixel+j*BytesPerPixel+1] = (std::byte) ( j * 255 / mWidth );              ///green
-            mData[i*mWidth*BytesPerPixel+j*BytesPerPixel+0] = (std::byte) ( (i+j) * 255 / (mHeight+mWidth) ); ///blue
-        }
-    }
 }
 
 std::array<std::byte, BitmapImage::FileHeaderSize> 
@@ -83,12 +75,14 @@ BitmapImage::Save(const std::filesystem::path& location) const
         file.write((char*)mData.data() + (i*widthInBytes), BitmapImage::BytesPerPixel * mWidth);
         file.write((char*)padding, paddingSize);
     }
+
+    Logger::Info("Image saved");
 }
 
-std::byte*
+std::span<std::byte>
 BitmapImage::Data()
 {
-    return mData.data();
+    return { mData.data(), mData.size() };
 }
 
 }
