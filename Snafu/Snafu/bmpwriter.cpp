@@ -44,7 +44,7 @@ Writer::Writer( const PixelMatrix& mat ) :
 
 bool Writer::save( std::string filename )
 {
-    std::ofstream file( filename );
+    std::ofstream file( filename, std::ios::out | std::ios::binary );
     const size_t matrixBytes = matrix_.width() * matrix_.height() / 8;
 
     bmpfile_header header {};

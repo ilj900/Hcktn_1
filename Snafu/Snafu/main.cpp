@@ -2,6 +2,7 @@
 #include <iostream>
 #include "bmpwriter.h"
 #include <ctime>
+#include <complex>
 
 constexpr const char* svg = 
     "<svg width=\"3840\" height=\"2160\" viewBox=\"0 0 3840 2160\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">\n"
@@ -23,6 +24,22 @@ void fillMatrix( PixelMatrix& matrix )
                 matrix.set( i, j );
 }
 
+void mandelbrot( PixelMatrix& matrix )
+{
+    using namespace std::complex_literals;
+    for ( size_t k = 0; k < HEIGHT; k++ )
+        for ( size_t j = 0; j < WIDTH; j++ )
+        {
+            std::complex<double> c = -2.0 + 3.0 * j / ( WIDTH - 1 ) - 1.0i + 2.0i * (double) k / (double) ( HEIGHT - 1 );
+            std::complex<double> z = c;
+            for ( int n = 1; n < 50 && abs( z ) < 2.0; ++n )
+            {
+                z = z * z + c;
+            }
+            matrix.set( k, j, abs( z ) < 2.0 );
+        }
+}
+
 int main()
 {
     clock_t start = 0, finish = 0;
@@ -36,6 +53,13 @@ int main()
     finish = clock();
     Writer writer( matrix );
     writer.save( "pic.bmp" );
+
+    PixelMatrix matrix2( WIDTH, HEIGHT );
+    mandelbrot( matrix2 );
+    Writer writer2( matrix2 );
+    writer2.save( "mand.bmp" );
+
+
     double t = (double) ( finish - start ) / CLK_TCK;
     std::cout << t << std::endl;
     return 0;
