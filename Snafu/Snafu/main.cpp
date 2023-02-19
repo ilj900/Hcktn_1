@@ -1,5 +1,7 @@
 #include <fstream>
+#include <iostream>
 #include "bmpwriter.h"
+#include <ctime>
 
 constexpr const char* svg = 
     "<svg width=\"3840\" height=\"2160\" viewBox=\"0 0 3840 2160\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">\n"
@@ -23,12 +25,18 @@ void fillMatrix( PixelMatrix& matrix )
 
 int main()
 {
+    clock_t start = 0, finish = 0;
+
     std::ofstream out( "pic.svg" );
     out << svg;
 
+    start = clock();
     PixelMatrix matrix( WIDTH, HEIGHT );
     fillMatrix( matrix );
+    finish = clock();
     Writer writer( matrix );
     writer.save( "pic.bmp" );
+    double t = (double) ( finish - start ) / CLK_TCK;
+    std::cout << t << std::endl;
     return 0;
 }
