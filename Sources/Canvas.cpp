@@ -26,7 +26,9 @@ Canvas::Write(std::span<std::byte> data) const
 }
 
 void
-Canvas::DrawShape(std::function<bool(double, double)> fn)
+Canvas::DrawShape(
+    std::function<bool(double, double)> fn,
+    const Pixel& color)
 {
     for (std::size_t i = 0; i < mHeight; i++)
     {
@@ -34,7 +36,7 @@ Canvas::DrawShape(std::function<bool(double, double)> fn)
         {
             if (fn(j, i))
             {
-                SetPixel(j, i, {0, 0, 0});
+                SetPixel(j, i, color);
             }
         }
     }

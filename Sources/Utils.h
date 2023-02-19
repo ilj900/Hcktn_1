@@ -13,6 +13,9 @@ struct Pixel
     std::uint8_t b;
 
     void Write(void* location);
+
+    static Pixel White();
+    static Pixel Black();
 };
 
 float Lerp(float a, float b, float t);

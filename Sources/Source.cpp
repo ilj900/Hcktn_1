@@ -8,6 +8,8 @@
 
 auto main() -> int try
 {
+    auto start = std::chrono::high_resolution_clock::now();
+
     Hackaton::Canvas canvas {3840, 2160};
 
     // Draw circle
@@ -27,8 +29,8 @@ auto main() -> int try
     // Draw circle
     canvas.DrawShape([x0 = 700, y0 = 700, radius = 300](double x, double y)
     {
-        return std::pow(x - x0, 2) + std::pow(y - y0, 2) <= std::pow(radius, 2);
-    });
+        return (std::pow(x - x0, 2) + std::pow(y - y0, 2) <= std::pow(radius, 2));
+    }, Hackaton::Pixel::Black());
 
     // Draw square
     canvas.DrawShape([x0 = 3840 - 700, y0 = 2160 - 700, size = 600](double x, double y)
@@ -37,7 +39,13 @@ auto main() -> int try
             && x >= (x0 - size / 2)
             && y <= (y0 + size / 2)
             && y >= (y0 - size / 2);
-    });
+    }, Hackaton::Pixel::Black());
+
+    auto end = std::chrono::high_resolution_clock::now();
+    Hackaton::Logger::Warning(
+        "Generation time " + std::to_string(
+            std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count())
+        + "ms");
 
     Hackaton::BitmapImage image {3840, 2160};
     canvas.Write(image.Data());

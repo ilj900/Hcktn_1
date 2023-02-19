@@ -14,7 +14,7 @@ class Canvas
 public:
     Canvas(std::uint32_t width, std::uint32_t height);
     void Write(std::span<std::byte> data) const;
-    void DrawShape(std::function<bool(double, double)> fn);
+    void DrawShape(std::function<bool(double, double)> fn, const Pixel& color);
     void DrawBackground(std::function<Pixel(double, double)> fn);
     void SetPixel(std::uint32_t x, std::uint32_t y, Pixel p);
 
