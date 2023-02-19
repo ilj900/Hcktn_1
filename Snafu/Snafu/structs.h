@@ -1,6 +1,7 @@
 #pragma once
 #include <cstdint>
 
+#pragma pack( push, 1 )
 struct bmpfile_header
 {
     uint16_t magic = 0x4D42; // 'BM'
@@ -31,3 +32,4 @@ struct bmpfile_color_table
     uint8_t red;
     uint8_t : 8;
 };
+#pragma pack( pop )

@@ -7,7 +7,7 @@ class PixelMatrix
 {
 public:
     PixelMatrix( size_t width, size_t height );
-    void set( size_t x, size_t y, bool value = true );
+    void set( size_t x, size_t y, bool value = false );
     bool get( size_t x, size_t y ) const;
     size_t width() const;
     size_t height() const;
