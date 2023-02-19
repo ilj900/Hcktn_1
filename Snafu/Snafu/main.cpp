@@ -7,9 +7,19 @@ constexpr const char* svg =
     "<circle cx=\"500\" cy=\"500\" r=\"200\" stroke=\"green\"/>\n"
     "</svg>";
 
+void fillMatrix( PixelMatrix& matrix )
+{
+
+}
+
 int main()
 {
     std::ofstream out( "pic.svg" );
     out << svg;
+
+    constexpr size_t WIDTH = 3840, HEIGHT = 2160;
+    PixelMatrix matrix( WIDTH, HEIGHT );
+    Writer writer( matrix );
+    writer.save( "pic.bmp" );
     return 0;
 }
