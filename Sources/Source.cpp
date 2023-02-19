@@ -1,4 +1,5 @@
 #include "Logger.h"
+#include "Image.h"
 
 auto main() -> int
 {
@@ -7,4 +8,6 @@ auto main() -> int
     Logger::Info("Hello, world");
     Logger::Warning("Hello, world");
     Logger::Error("Hello, world");
+
+    BitmapImage image {3840, 2160};
 }
